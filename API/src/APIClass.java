@@ -25,33 +25,37 @@ public class APIClass {
 			PrintWriter save = new PrintWriter (new BufferedWriter(new FileWriter("data/file.out")));
 			
 			try {
-				JSONObject jo = new JSONObject(response);
-				System.out.println(jo.toString(4));
-				JSONArray data = jo.getJSONArray("data");
 				
-				if(data != null) {
-				   
-					String[] first_names = new String[data.length()];
-				    String[] last_names = new String[data.length()];
-				    int[] age = new int[data.length()];
-				    
-				    for(int i = 0 ; i < data.length() ; i++) {
-				    	JSONObject jso = data.getJSONObject(i);
-				    	first_names[i] = jso.getString("first_name");
-				    	last_names[i] = jso.getString("last_name");
-				    	age[i] = jso.getInt("age");
+				JSONObject jo = new JSONObject(response);
+				JSONArray data = jo.getJSONArray("results");
 
-				    	Person p = new Person(first_names[i], last_names[i], age[i]);
+				if(data != null) {
+
+					String[] first_names = new String[data.length()];
+					String[] last_names = new String[data.length()];
+					int[] age = new int[data.length()];
+
+					for(int i = 0 ; i < data.length() ; i++) {
+						JSONObject jso = data.getJSONObject(i);
+						JSONObject o = jso.getJSONObject("person");
+						first_names[i] = o.getString("first_name");
+						last_names[i] = o.getString("last_name");
+						age[i] = o.getInt("age");
+
+						Person p = new Person(first_names[i], last_names[i], age[i]);
+						System.out.println(p.toString());
 						save.println(p);
-				    }
+					}
 				}
+
+			
 				save.close();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
